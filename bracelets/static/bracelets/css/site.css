@@ -247,9 +247,10 @@ a:hover {
 .product-image,
 .bracelet-image {
     position: relative;
+    width: 100%;
     aspect-ratio: 4 / 3;
     overflow: hidden;
-    border-radius: 14px 14px 0 0;
+    border-radius: 14px;
     background: linear-gradient(145deg, #eaf7f6, #dbf3f1);
 }
 
@@ -616,4 +617,39 @@ a:hover {
 .pagination-premium .page-item.disabled .page-link {
     opacity: 0.5;
     cursor: not-allowed;
+}
+
+.cart-item-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.cart-item-image {
+    width: 60px;
+    height: 60px;
+    flex: 0 0 60px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: linear-gradient(145deg, #eaf7f6, #dbf3f1);
+}
+
+.cart-item-image img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover;
+    display: block;
+}
+
+@media (min-width: 768px) {
+    .cart-item-row {
+        flex-direction: row;
+        align-items: center;
+    }
+    
+    .cart-item-image {
+        width: 80px;
+        height: 80px;
+        flex: 0 0 80px;
+    }
 }
