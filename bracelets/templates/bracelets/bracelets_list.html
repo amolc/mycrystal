@@ -131,15 +131,15 @@
                             <article class="bracelet-card h-100">
                                 <a href="{% url 'bracelet_detail' bracelet.pk %}" class="text-decoration-none text-reset d-block">
                                     <div class="bracelet-image">
-                                            {% if bracelet.local_image %}
-                                                <img src="{% static bracelet.local_image %}" alt="{{ bracelet.name }}" loading="lazy">
-                                            {% elif bracelet.image_url %}
-                                                <img src="{{ bracelet.image_url }}" alt="{{ bracelet.name }}" loading="lazy">
-                                            {% elif bracelet.image %}
-                                                <img src="{{ bracelet.image.url }}" alt="{{ bracelet.name }}" loading="lazy">
-                                            {% else %}
-                                                <img src="https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=700" alt="{{ bracelet.name }}" loading="lazy">
-                                            {% endif %}
+                                        {% if bracelet.local_image %}
+                                            <img src="{% static bracelet.local_image %}" alt="{{ bracelet.name }}" loading="lazy">
+                                        {% elif bracelet.image_url %}
+                                            <img src="{{ bracelet.image_url }}" alt="{{ bracelet.name }}" loading="lazy">
+                                        {% elif bracelet.image %}
+                                            <img src="{{ bracelet.image.url }}" alt="{{ bracelet.name }}" loading="lazy">
+                                        {% else %}
+                                            <img src="https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=700" alt="{{ bracelet.name }}" loading="lazy">
+                                        {% endif %}
                                     </div>
                                 </a>
                                 <div class="bracelet-details d-flex flex-column">
@@ -168,6 +168,42 @@
                         </div>
                     {% endfor %}
                 </div>
+
+                {% if bracelets.has_other_pages %}
+                <nav aria-label="Page navigation" class="mt-5">
+                    <ul class="pagination pagination-premium justify-content-center">
+                        {% if bracelets.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?{% for key, value in current_filters.items %}{{ key }}={{ value }}&{% endfor %}page={{ bracelets.previous_page_number }}" aria-label="Previous">
+                                <i class="bi bi-chevron-left"></i>
+                            </a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link"><i class="bi bi-chevron-left"></i></span>
+                        </li>
+                        {% endif %}
+                        {% for num in bracelets.paginator.page_range %}
+                            {% if bracelets.number == num %}
+                            <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                            {% elif num > bracelets.number|add:'-2' and num < bracelets.number|add:'3' %}
+                            <li class="page-item"><a class="page-link" href="?{% for key, value in current_filters.items %}{{ key }}={{ value }}&{% endfor %}page={{ num }}">{{ num }}</a></li>
+                            {% endif %}
+                        {% endfor %}
+                        {% if bracelets.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?{% for key, value in current_filters.items %}{{ key }}={{ value }}&{% endfor %}page={{ bracelets.next_page_number }}" aria-label="Next">
+                                <i class="bi bi-chevron-right"></i>
+                            </a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link"><i class="bi bi-chevron-right"></i></span>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
             </div>
         </div>
     </div>

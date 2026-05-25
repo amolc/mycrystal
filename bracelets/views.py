@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
 from django.shortcuts import redirect, render, get_object_or_404
 from .forms import BraceletForm
@@ -14,7 +15,16 @@ def is_site_admin(user):
 
 
 def landing_page(request):
-    bracelets = Bracelet.objects.order_by('-created_at')[:9]
+    bracelet_list = Bracelet.objects.order_by('-created_at')
+    paginator = Paginator(bracelet_list, 9)
+    page = request.GET.get('page')
+    try:
+        bracelets = paginator.page(page)
+    except PageNotAnInteger:
+        bracelets = paginator.page(1)
+    except EmptyPage:
+        bracelets = paginator.page(paginator.num_pages)
+
     for bracelet in bracelets:
         bracelet.local_image = bracelet_image_map.get(bracelet.name)
     return render(request, 'bracelets/landing.html', {'bracelets': bracelets})
@@ -63,7 +73,15 @@ def bracelets_list(request):
     order = sort_map[sort]
     qs = qs.order_by(order)
 
-    bracelets = list(qs)
+    paginator = Paginator(qs, 12)
+    page = request.GET.get('page')
+    try:
+        bracelets = paginator.page(page)
+    except PageNotAnInteger:
+        bracelets = paginator.page(1)
+    except EmptyPage:
+        bracelets = paginator.page(paginator.num_pages)
+
     for bracelet in bracelets:
         bracelet.local_image = bracelet_image_map.get(bracelet.name)
 
@@ -72,7 +90,7 @@ def bracelets_list(request):
     current_filters = {
         key: value
         for key, value in request.GET.dict().items()
-        if value
+        if key != 'page' and value
     }
 
     return render(request, 'bracelets/bracelets_list.html', {
